@@ -45,6 +45,8 @@ class Options {
                 return this.viewRoles()
             case "View All Employees":
                 return this.viewEmployees()
+            // case "Add a Department":
+            //     return this.addDepartment()
             case "Add a Role":
                 return this.addRole()     
             default:
@@ -56,7 +58,8 @@ class Options {
     db.promise()
     .query(`SELECT * FROM departments`)
     .then(([results]) => {
-      console.table(results);
+        const transformedResults = ({results,id})
+      console.table(transformedResults);
     })
     .catch(console.log)
     .finally(() =>this.viewOptions());
@@ -82,14 +85,29 @@ class Options {
   async addRole(){
     // WE need the current departments
     const [departments] = await db.promise().query(`SELECT * FROM departments`)
-    console.log(departments)
+    // console.log(departments)
     const formattedDepartments = departments.map(row => ({value: row.id, name: row.department_name}))
     console.log(formattedDepartments)
     // WE need the title, the salary, and the departmentId
     const answers = await inquirer.prompt(questions.addRole(formattedDepartments))
-    console.log(answers)
+    console.table(answers)
     //figure out the actual addition
   }
+  // async addDepartment(){
+  //  // getting answers if add department is selected
+  //   const answers = await inquirer.prompt(questions.addDepartment);
+  //   console.table(answers);
+  //   // inserting answers into department table
+  //   const [departments] = await db.promise().query(`SELECT * FROM departments`)
+  //   await db.promise().query(`INSERT INTO departments (department_name) VALUES = ?`, answers, function(err, results) {
+  //      if (err) {
+  //       console.log(err)
+  //      } 
+  //      console.table(results);
+  //   })
+    
+  //   // console.table(department);
+  // }
 
   //make new class for each adding option
   // addOptions()

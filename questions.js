@@ -26,6 +26,13 @@ const questions = {
       },
     ];
   },
+//   addDepartment(choicesArr) {
+//     return [
+//         {
+//             type:
+//         }
+//     ]
+//   }
 };
 
 module.exports = questions;
