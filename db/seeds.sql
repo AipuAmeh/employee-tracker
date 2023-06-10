@@ -14,9 +14,9 @@ VALUES  ("Fashion Illustrator", 90000, 1),
         ("Accountant", 80000, 5);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES  ("Ivana", "Lanier", 1, 2),
-        ("Nia", "Maat", 2, NULL),
-        ("Savanna", "Kanu", 3, 4),
-        ("Jamal", "Cunningham", 4, NULL),
-        ("Shareen", "El Naga", 3, 2),
-        ("Sabo", "Ichapi", 3, 4);
+VALUES  ("Ivana", "Lanier", 1, NULL),
+        ("Nia", "Maat", 2, 1),
+        ("Savanna", "Kanu", 3, NULL),
+        ("Jamal", "Cunningham", 4, 1),
+        ("Shareen", "El Naga", 5, 3),
+        ("Sabo", "Ichapi", 6, 1);
