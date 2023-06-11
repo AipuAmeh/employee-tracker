@@ -16,12 +16,12 @@ const questions = {
       {
         type: "input",
         message: "What's the salary of your role?",
-        name: "role_salary",
+        name: "salary",
       },
       {
         type: "list",
         message: "What's the department your role belongs to",
-        name: "role_department_id",
+        name: "department_id",
         choices: choicesArr,
       },
     ];
