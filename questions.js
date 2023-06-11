@@ -1,7 +1,7 @@
 const questions = {
   addDepartment: [
     {
-      type: "input",
+      type: 'input',
       message: "What's the name of your department?",
       name: "department_name",
     },
