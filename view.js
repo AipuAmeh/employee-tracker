@@ -45,8 +45,8 @@ class Options {
                 return this.viewRoles()
             case "View All Employees":
                 return this.viewEmployees()
-            // case "Add a Department":
-            //     return this.addDepartment()
+            case "Add a Department":
+                return this.addDepartment()
             case "Add a Role":
                 return this.addRole()     
             default:
@@ -58,8 +58,7 @@ class Options {
     db.promise()
     .query(`SELECT * FROM departments`)
     .then(([results]) => {
-        const transformedResults = ({results,id})
-      console.table(transformedResults);
+      console.table(results);
     })
     .catch(console.log)
     .finally(() =>this.viewOptions());
@@ -92,22 +91,30 @@ class Options {
     const answers = await inquirer.prompt(questions.addRole(formattedDepartments))
     console.table(answers)
     //figure out the actual addition
+    // await db.promise()
+    // .query(`INSERT INTO role (role_title, salary, department_id) VALUES (?,?,?)`, answers.role_title, answers.role_salary, answers.role_department_id, (err, results) => {
+    //   if (err) {
+    //     console.log(err)
+    //   }
+    // })
+    // const [role] = await db.promise().query(`SELECT * FROM role`);
+    // console.table(role);
+    // this.viewOptions();
   }
-  // async addDepartment(){
-  //  // getting answers if add department is selected
-  //   const answers = await inquirer.prompt(questions.addDepartment);
-  //   console.table(answers);
-  //   // inserting answers into department table
-  //   const [departments] = await db.promise().query(`SELECT * FROM departments`)
-  //   await db.promise().query(`INSERT INTO departments (department_name) VALUES = ?`, answers, function(err, results) {
-  //      if (err) {
-  //       console.log(err)
-  //      } 
-  //      console.table(results);
-  //   })
-    
-  //   // console.table(department);
-  // }
+  async addDepartment(){
+    const answers = await inquirer.prompt(questions.addDepartment);
+    console.table(answers.department_name);
+    await db.promise()
+    .query(`INSERT INTO departments (department_name) VALUES (?)`, answers.department_name, (err, results) => {
+      if (err) {
+        console.log(err);
+      }   
+    })
+    const [departments] = await db.promise().query(`SELECT * FROM departments`);
+    console.table(departments);
+  
+  this.viewOptions();
+  }
 
   //make new class for each adding option
   // addOptions()
