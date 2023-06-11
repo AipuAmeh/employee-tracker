@@ -82,30 +82,36 @@ class Options {
     .finally(() => this.viewOptions());
   }
   async addRole(){
-    // WE need the current departments
+
     const [departments] = await db.promise().query(`SELECT * FROM departments`)
-    // console.log(departments)
+
     const formattedDepartments = departments.map(row => ({value: row.id, name: row.department_name}))
     console.log(formattedDepartments)
-    // WE need the title, the salary, and the departmentId
+
     const answers = await inquirer.prompt(questions.addRole(formattedDepartments))
     console.table(answers)
-    //figure out the actual addition
-    // await db.promise()
-    // .query(`INSERT INTO role (role_title, salary, department_id) VALUES (?,?,?)`, answers.role_title, answers.role_salary, answers.role_department_id, (err, results) => {
-    //   if (err) {
-    //     console.log(err)
-    //   }
-    // })
-    // const [role] = await db.promise().query(`SELECT * FROM role`);
-    // console.table(role);
-    // this.viewOptions();
+
+    var sql = `INSERT INTO role (role_title, salary, department_id) VALUES (?,?,?)`;
+    var values = [answers.role_title, answers.salary, answers.department_id];
+
+    await db.promise()
+    .query(sql, values, (err, results) => {
+      if (err) {
+        console.log(err)
+      }
+    })
+    const [role] = await db.promise().query(`SELECT * FROM role`);
+    console.table(role);
+    this.viewOptions();
   }
   async addDepartment(){
     const answers = await inquirer.prompt(questions.addDepartment);
     console.table(answers.department_name);
+    var sql = `INSERT INTO departments (department_name) VALUES (?)`;
+    var values = [answers.department_name];
+
     await db.promise()
-    .query(`INSERT INTO departments (department_name) VALUES (?)`, answers.department_name, (err, results) => {
+    .query(sql, values , (err, results) => {
       if (err) {
         console.log(err);
       }   
@@ -115,7 +121,7 @@ class Options {
   
   this.viewOptions();
   }
-
+  
   //make new class for each adding option
   // addOptions()
 
