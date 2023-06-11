@@ -20,19 +20,38 @@ const questions = {
       },
       {
         type: "list",
-        message: "What's the department your role belongs to",
+        message: "What's the department your role belongs to?",
         name: "department_id",
         choices: choicesArr,
       },
     ];
   },
-//   addDepartment(choicesArr) {
-//     return [
-//         {
-//             type:
-//         }
-//     ]
-//   }
+  addEmployee(choicesArr, choicesArrTwo) {
+    return [
+        {
+            type: "input",
+            message: "What is the employees first name?",
+            name: "first_name",
+        },
+        {
+          type: "input",
+          message: "What is the employees last name?",
+          name: "last_name",
+        },
+        {
+          type: "list",
+          message: "What is the employees role?",
+          name: "role_id",
+          choices: choicesArr,
+        },
+        {
+          type: "list",
+          message: "Which manager does the employee belong to?",
+          name: "manager_id",
+          choices: choicesArrTwo,
+        }
+    ]
+  }
 };
 
 module.exports = questions;

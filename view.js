@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-const questions = require("./questions")
+const questions = require("./questions");
 const db = mysql.createConnection(
   {
     host: "localhost",
@@ -39,91 +39,134 @@ class Options {
         //make logic for each viewing option
         // FIX INDEX //
         switch (response.options) {
-            case "View All Departments":
-                return this.viewDepartments()
-            case "View All Roles":
-                return this.viewRoles()
-            case "View All Employees":
-                return this.viewEmployees()
-            case "Add a Department":
-                return this.addDepartment()
-            case "Add a Role":
-                return this.addRole()     
-            default:
-                db.end(err => err ? console.log(err) : console.log("thanks for using our software"))
+          case "View All Departments":
+            return this.viewDepartments();
+          case "View All Roles":
+            return this.viewRoles();
+          case "View All Employees":
+            return this.viewEmployees();
+          case "Add a Department":
+            return this.addDepartment();
+          case "Add a Role":
+            return this.addRole();
+          case "Add an Employee":
+            return this.addEmployee();
+          default:
+            db.end((err) =>
+              err
+                ? console.log(err)
+                : console.log("thanks for using our software")
+            );
         }
       });
   }
-  async viewDepartments(){
+  async viewDepartments() {
     db.promise()
-    .query(`SELECT * FROM departments`)
-    .then(([results]) => {
-      console.table(results);
-    })
-    .catch(console.log)
-    .finally(() =>this.viewOptions());
+      .query(`SELECT * FROM departments`)
+      .then(([results]) => {
+        console.table(results);
+      })
+      .catch(console.log)
+      .finally(() => this.viewOptions());
   }
-  async viewRoles(){
+  async viewRoles() {
     db.promise()
-    .query(`SELECT * FROM role`)
-    .then(([results]) => {
-      console.table(results);
-    })
-    .catch(console.log)
-    .finally(() =>this.viewOptions());
+      .query(`SELECT * FROM role`)
+      .then(([results]) => {
+        console.table(results);
+      })
+      .catch(console.log)
+      .finally(() => this.viewOptions());
   }
   async viewEmployees() {
     db.promise()
-    .query(`SELECT * FROM employee`)
-    .then(([results]) => {
+      .query(`SELECT * FROM employee`)
+      .then(([results]) => {
         console.table(results);
-    })
-    .catch(console.log)
-    .finally(() => this.viewOptions());
+      })
+      .catch(console.log)
+      .finally(() => this.viewOptions());
   }
-  async addRole(){
+  async addRole() {
+    const [departments] = await db.promise().query(`SELECT * FROM departments`);
 
-    const [departments] = await db.promise().query(`SELECT * FROM departments`)
+    const formattedDepartments = departments.map((row) => ({
+      value: row.id,
+      name: row.department_name,
+    }));
+    console.log(formattedDepartments);
 
-    const formattedDepartments = departments.map(row => ({value: row.id, name: row.department_name}))
-    console.log(formattedDepartments)
-
-    const answers = await inquirer.prompt(questions.addRole(formattedDepartments))
-    console.table(answers)
+    const answers = await inquirer.prompt(
+      questions.addRole(formattedDepartments)
+    );
+    console.table(answers);
 
     var sql = `INSERT INTO role (role_title, salary, department_id) VALUES (?,?,?)`;
     var values = [answers.role_title, answers.salary, answers.department_id];
 
-    await db.promise()
-    .query(sql, values, (err, results) => {
+    await db.promise().query(sql, values, (err, results) => {
       if (err) {
-        console.log(err)
+        console.log(err);
       }
-    })
+    });
     const [role] = await db.promise().query(`SELECT * FROM role`);
     console.table(role);
     this.viewOptions();
   }
-  async addDepartment(){
+  async addDepartment() {
     const answers = await inquirer.prompt(questions.addDepartment);
     console.table(answers.department_name);
     var sql = `INSERT INTO departments (department_name) VALUES (?)`;
     var values = [answers.department_name];
 
-    await db.promise()
-    .query(sql, values , (err, results) => {
+    await db.promise().query(sql, values, (err, results) => {
       if (err) {
         console.log(err);
-      }   
-    })
+      }
+    });
     const [departments] = await db.promise().query(`SELECT * FROM departments`);
     console.table(departments);
-  
-  this.viewOptions();
+
+    this.viewOptions();
   }
-  
-  //make new class for each adding option
-  // addOptions()
+  async addEmployee() {
+    const [role] = await db.promise().query(`SELECT * FROM role`);
+    const formattedRole = role.map((row) => ({
+      value: row.id,
+      name: row.role_title,
+    }));
+    console.log(formattedRole);
+    let [employee] = await db.promise().query(`SELECT * FROM employee`);
+    const formattedEmployee = employee.map((row) => ({
+      value: row.id,
+      name: row.last_name,
+    }));
+    console.log(formattedEmployee);
+
+    const answers = await inquirer.prompt(
+      questions.addEmployee(formattedRole, formattedEmployee)
+    );
+    console.table(answers);
+
+    var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`;
+    var values = [
+      answers.first_name,
+      answers.last_name,
+      answers.role_id,
+      answers.manager_id,
+    ];
+
+    await db.promise().query(sql, values, (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+    const [updatedEmployee] = await db
+      .promise()
+      .query(`SELECT * FROM employee`);
+    console.table(updatedEmployee);
+    this.viewOptions();
+  }
 
   //make new class for updating option
   // updateOptions()
