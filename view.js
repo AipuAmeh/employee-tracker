@@ -51,6 +51,8 @@ class Options {
             return this.addRole();
           case "Add an Employee":
             return this.addEmployee();
+          case "Update an Employee": 
+            return this.updateEmployee();
           default:
             db.end((err) =>
               err
@@ -89,28 +91,24 @@ class Options {
   }
   async addRole() {
     const [departments] = await db.promise().query(`SELECT * FROM departments`);
-
     const formattedDepartments = departments.map((row) => ({
       value: row.id,
       name: row.department_name,
     }));
     console.log(formattedDepartments);
-
     const answers = await inquirer.prompt(
       questions.addRole(formattedDepartments)
     );
     console.table(answers);
-
     var sql = `INSERT INTO role (role_title, salary, department_id) VALUES (?,?,?)`;
     var values = [answers.role_title, answers.salary, answers.department_id];
 
     await db.promise().query(sql, values, (err, results) => {
       if (err) {
         console.log(err);
-      }
+      } 
     });
-    const [role] = await db.promise().query(`SELECT * FROM role`);
-    console.table(role);
+    console.log('Successfully added Role');
     this.viewOptions();
   }
   async addDepartment() {
@@ -124,9 +122,7 @@ class Options {
         console.log(err);
       }
     });
-    const [departments] = await db.promise().query(`SELECT * FROM departments`);
-    console.table(departments);
-
+    console.log('Successfully added Department');
     this.viewOptions();
   }
   async addEmployee() {
@@ -142,12 +138,10 @@ class Options {
       name: row.last_name,
     }));
     console.log(formattedEmployee);
-
     const answers = await inquirer.prompt(
       questions.addEmployee(formattedRole, formattedEmployee)
     );
     console.table(answers);
-
     var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`;
     var values = [
       answers.first_name,
@@ -155,21 +149,43 @@ class Options {
       answers.role_id,
       answers.manager_id,
     ];
-
     await db.promise().query(sql, values, (err, results) => {
       if (err) {
         console.log(err);
       }
     });
-    const [updatedEmployee] = await db
-      .promise()
-      .query(`SELECT * FROM employee`);
-    console.table(updatedEmployee);
+    console.log('Successfully added Employee');
     this.viewOptions();
   }
-
-  //make new class for updating option
-  // updateOptions()
+async updateEmployee() {
+  const [employee] = await db.promise().query(`SELECT * FROM employee`);
+  const formattedEmployee = employee.map((row) => ({
+   name: row.last_name
+  }));
+  console.log(formattedEmployee)
+  const [role] = await db.promise().query(`SELECT * FROM role`);
+  const formattedRole = role.map((row) => ({
+    value: row.id,
+    name: row.role_title,
+  }));
+  const answers = await inquirer.prompt(
+    questions.updateEmployee(formattedEmployee, formattedRole)
+  );
+  console.table(answers);
+  var sql = `UPDATE employee 
+  SET last_name = (?)
+  WHERE role_id = (?)`;
+  var values = [answers.employee_name, answers.role_id]
+  await db.promise().query(sql,values, (err,results) => {
+    if (err) {
+      console.log(err)
+    } 
+  });
+console.log("Employee sucessfully updated");
+this.viewOptions();
 }
+
+}
+
 
 module.exports = Options;
