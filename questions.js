@@ -51,6 +51,22 @@ const questions = {
           choices: choicesArrTwo,
         }
     ]
+  },
+  updateEmployee(choicesArr, choicesArrTwo) {
+    return [
+      {
+        type: "list",
+        message: "Please select an employee to update",
+        name: "employee_name",
+        choices: choicesArr,
+      },
+      {
+        type: "list",
+        message: "Please select a role to update",
+        name: "role_id",
+        choices: choicesArrTwo
+      }
+    ]
   }
 };
 
