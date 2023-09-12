@@ -5,7 +5,7 @@
 This week's challenge was all about using the database. We combined our knowledge of classes, modularization, and MySQL2 to create a program that allows us to manage employees. We also revisited inquirer to make the application interactive with the user. The most important aspect of this challenge was creating tables in the database and showing our ability to gain data from them. 
 
 ## Installation
-Link to Demo: https://watch.screencastify.com/v/cWGhRPVlr3yjpC6fwuLi
+[Link to Demo](https://watch.screencastify.com/v/cWGhRPVlr3yjpC6fwuLi)
 
 You need Inquirer, Express, and MySQL2 to complete this project.
 
